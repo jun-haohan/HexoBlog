@@ -3,12 +3,12 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Hexo
+title: Junhaohan
 subtitle: ''
 description: ''
 keywords:
-author: John Doe
-language: en
+author: junhaohan
+language: zh-CN
 timezone: ''
 
 # URL
@@ -102,5 +102,6 @@ theme: 3-hexo
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: git
-  repo: https://github.com/jun-haohan/jun-haohan.github.io.git
-  branch: main
+  repo: git@jun-haohan.com:/www/repo/hexo.git
+#  repo: https://github.com/jun-haohan/jun-haohan.github.io.git
+  branch: master
