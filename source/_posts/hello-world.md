@@ -10,17 +10,22 @@ Welcome to [Hexo](https://hexo.io/)! This is your very first post. Check [docume
 $ hexo new "My New Post"
 ```
 
-### 本地启动
+### 本地启动（sever）
 ``` bash
 $ hexo s
 ```
 
-### 生成静态文件
+### 生成静态文件（generate）
 ``` bash
 $ hexo g
 ```
 
-### 远端部署
+### 远端部署（deploy）
 ``` bash
 $ hexo d
+```
+
+### 清理缓存
+```bash
+$ hexo clean
 ```
