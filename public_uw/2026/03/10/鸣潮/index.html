@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>鸣潮 | Junhaohan</title>
+  <meta name="keywords" content="">
+  <meta name="description" content="鸣潮 | Junhaohan">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="description" content="垂直同步 显示器渲染画面：以固定间隔（144帧每6.94ms刷新一次）从上往下刷新，随时接收显卡发送的画面 显卡渲染画面：逐帧渲染，根据画面不同，消耗时间不同，输出间隔不稳定。 原始情况下：显卡可能在显示器刷新到一半时提交画面，显示器接收后立刻开始显示，导致上半为旧画面，下半为新画面，显示为画面撕裂。（显卡提交完整画面，但显示器不是从头开始刷新的）   垂直同步：显示器主导，强迫显卡在显示器开始刷">
+<meta property="og:type" content="article">
+<meta property="og:title" content="视觉选项分析">
+<meta property="og:url" content="https://jun-haohan.com/uw/2026/05/31/%E8%A7%86%E8%A7%89%E9%80%89%E9%A1%B9%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="Junhaohan">
+<meta property="og:description" content="垂直同步 显示器渲染画面：以固定间隔（144帧每6.94ms刷新一次）从上往下刷新，随时接收显卡发送的画面 显卡渲染画面：逐帧渲染，根据画面不同，消耗时间不同，输出间隔不稳定。 原始情况下：显卡可能在显示器刷新到一半时提交画面，显示器接收后立刻开始显示，导致上半为旧画面，下半为新画面，显示为画面撕裂。（显卡提交完整画面，但显示器不是从头开始刷新的）   垂直同步：显示器主导，强迫显卡在显示器开始刷">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-05-30T17:43:54.000Z">
+<meta property="article:modified_time" content="2026-06-01T02:46:28.112Z">
+<meta property="article:author" content="junhaohan">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="icon" href="/img/avatar.jpg">
+
+<link href="/css/style.css?v=1.1.0" rel="stylesheet">
+
+<link href="/css/hl_theme/atom-light.css?v=1.1.0" rel="stylesheet">
+
+<link href="//cdn.jsdelivr.net/npm/animate.css@4.1.0/animate.min.css" rel="stylesheet">
+
+<script src="//cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+<script src="/js/titleTip.js?v=1.1.0" ></script>
+
+<script src="//cdn.jsdelivr.net/npm/highlightjs@9.16.2/highlight.pack.min.js"></script>
+<script>
+    hljs.initHighlightingOnLoad();
+</script>
+
+<script src="//cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js"></script>
+
+
+
+<script src="//cdn.jsdelivr.net/npm/jquery.cookie@1.4.1/jquery.cookie.min.js" ></script>
+
+<script src="/js/iconfont.js?v=1.1.0" ></script>
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<div style="display: none">
+  <input class="theme_disqus_on" value="false">
+  <input class="theme_preload_comment" value="">
+  <input class="theme_blog_path" value="">
+  <input id="theme_shortcut" value="false" />
+  <input id="theme_highlight_on" value="true" />
+  <input id="theme_code_copy" value="true" />
+</div>
+
+
+
+<body>
+<aside class="nav">
+    <div class="nav-left">
+        <a href="/"
+   class="avatar_target">
+    <img class="avatar"
+         src="/img/avatar.jpg"/>
+</a>
+<div class="author">
+    <span>junhaohan</span>
+</div>
+
+<div class="icon">
+    
+        
+            <a title="github"
+               href="https://github.com/jun-haohan"
+               target="_blank">
+                
+                    <svg class="iconfont-svg" aria-hidden="true">
+                        <use xlink:href="#icon-github"></use>
+                    </svg>
+                
+            </a>
+        
+    
+</div>
+
+
+
+
+
+<ul>
+    <li>
+        <div class="all active" data-rel="全部文章">全部文章
+            
+                <small>(7)</small>
+            
+        </div>
+    </li>
+    
+        
+            
+                
+    <li>
+        <div data-rel="学习">
+            
+            学习
+            <small>(1)</small>
+        </div>
+        
+    </li>
+
+            
+        
+    
+        
+            
+                
+    <li>
+        <div data-rel="应聘">
+            
+            应聘
+            <small>(2)</small>
+        </div>
+        
+    </li>
+
+            
+        
+    
+        
+            
+                
+    <li>
+        <div data-rel="游戏">
+            
+            游戏
+            <small>(2)</small>
+        </div>
+        
+    </li>
+
+            
+        
+    
+        
+            
+                
+    <li>
+        <div data-rel="总结">
+            
+            总结
+            <small>(1)</small>
+        </div>
+        
+    </li>
+
+            
+        
+    
+</ul>
+<div class="left-bottom">
+    <div class="menus">
+        
+            
+            
+            
+    </div>
+    <div>
+        
+        
+    </div>
+</div>
+<input type="hidden" id="yelog_site_posts_number" value="7">
+
+<div style="display: none">
+    <span id="busuanzi_value_site_uv"></span>
+    <span id="busuanzi_value_site_pv"></span>
+</div>
+
+    </div>
+    <div class="nav-right">
+        <div class="friends-area">
+    <div class="friends-title">
+        友情链接
+        <i class="iconfont icon-left"></i>
+    </div>
+    <div class="friends-content">
+        <ul>
+            
+            <li><a target="_blank" href="http://yelog.org/">叶落阁</a></li>
+            
+        </ul>
+    </div>
+</div>
+        <div class="title-list">
+    <div class="right-top">
+        <div id="default-panel">
+            <i class="iconfont icon-search" data-title="搜索"></i>
+            <div class="right-title">全部文章</div>
+            <i class="iconfont icon-file-tree" data-title="切换到大纲视图"></i>
+        </div>
+        <div id="search-panel">
+            <i class="iconfont icon-left" data-title="返回"></i>
+            <input id="local-search-input" autocomplete="off"/>
+            <label class="border-line" for="input"></label>
+            <i class="iconfont icon-case-sensitive" data-title="大小写敏感"></i>
+            <i class="iconfont icon-tag" data-title="标签"></i>
+        </div>
+        <div id="outline-panel" style="display: none">
+            <div class="right-title">大纲</div>
+            <i class="iconfont icon-list" data-title="切换到文章列表"></i>
+        </div>
+    </div>
+
+    <div class="tags-list">
+    <input id="tag-search" />
+    <div class="tag-wrapper">
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>国考省考</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>明日方舟</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>农商行</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>肉鸽</a>
+            </li>
+        
+            <li class="article-tag-list-item">
+                <i class="iconfont icon-tag"></i><a>银行</a>
+            </li>
+        
+    </div>
+
+</div>
+
+    
+    <nav id="title-list-nav">
+        
+        
+        <a  class="全部文章 "
+           href="/uw/2026/05/31/%E8%A7%86%E8%A7%89%E9%80%89%E9%A1%B9%E5%88%86%E6%9E%90/"
+           data-tag=""
+           data-author="" >
+            <span class="post-title" title="视觉选项分析">视觉选项分析</span>
+            <span class="post-date" title="2026-05-31 01:43:54">2026/05/31</span>
+        </a>
+        
+        
+        <a  class="全部文章 游戏 "
+           href="/uw/2026/03/10/%E9%B8%A3%E6%BD%AE/"
+           data-tag=""
+           data-author="" >
+            <span class="post-title" title="鸣潮">鸣潮</span>
+            <span class="post-date" title="2026-03-10 23:34:28">2026/03/10</span>
+        </a>
+        
+        
+        <a  class="全部文章 总结 "
+           href="/uw/2025/07/08/%E5%B0%B1%E4%B8%9A/%E6%8B%9B%E8%81%98%E7%A0%94%E7%A9%B6/"
+           data-tag=""
+           data-author="" >
+            <span class="post-title" title="招聘研究">招聘研究</span>
+            <span class="post-date" title="2025-07-08 22:59:35">2025/07/08</span>
+        </a>
+        
+        
+        <a  class="全部文章 应聘 "
+           href="/uw/2025/04/22/%E5%B0%B1%E4%B8%9A/%E5%9B%BD%E8%80%83%E7%9C%81%E8%80%83%E8%AE%B0%E5%BD%95/"
+           data-tag="国考省考"
+           data-author="" >
+            <span class="post-title" title="国考省考记录">国考省考记录</span>
+            <span class="post-date" title="2025-04-22 00:12:10">2025/04/22</span>
+        </a>
+        
+        
+        <a  class="全部文章 应聘 "
+           href="/uw/2025/04/07/%E5%B0%B1%E4%B8%9A/%E5%86%9C%E5%95%86%E8%A1%8C%E9%9D%A2%E8%AF%95/"
+           data-tag="农商行"
+           data-author="" >
+            <span class="post-title" title="农商行面试">农商行面试</span>
+            <span class="post-date" title="2025-04-07 01:57:38">2025/04/07</span>
+        </a>
+        
+        
+        <a  class="全部文章 学习 "
+           href="/uw/2025/04/01/%E5%B0%B1%E4%B8%9A/%E9%93%B6%E8%A1%8C%E7%9F%A5%E8%AF%86/"
+           data-tag="银行"
+           data-author="" >
+            <span class="post-title" title="银行知识">银行知识</span>
+            <span class="post-date" title="2025-04-01 00:01:55">2025/04/01</span>
+        </a>
+        
+        
+        <a  class="全部文章 游戏 "
+           href="/uw/2025/01/20/%E8%82%89%E9%B8%BD/"
+           data-tag="明日方舟,肉鸽"
+           data-author="" >
+            <span class="post-title" title="肉鸽进度">肉鸽进度</span>
+            <span class="post-date" title="2025-01-20 00:22:57">2025/01/20</span>
+        </a>
+        
+        <div id="no-item-tips">
+
+        </div>
+    </nav>
+    <div id="outline-list">
+    </div>
+</div>
+
+    </div>
+    <div class="hide-list">
+        <div class="semicircle" data-title="切换全屏">
+            <div class="brackets first"><</div>
+            <div class="brackets">&gt;</div>
+        </div>
+    </div>
+</aside>
+<div id="post">
+    <div class="pjax">
+        <article id="post-鸣潮" class="article article-type-post" itemscope itemprop="blogPost">
+    
+        <h1 class="article-title">鸣潮</h1>
+    
+    <div class="article-meta">
+        
+        
+        
+        <span class="book">
+            <i class="iconfont icon-category"></i>
+            
+            
+            <a  data-rel="游戏">游戏</a>
+            
+        </span>
+        
+        
+    </div>
+    <div class="article-meta">
+        
+            发布时间 : <time class="date" title='最后更新: 2026-03-17 23:09:51'>2026-03-10 23:34</time>
+        
+    </div>
+    <div class="article-meta">
+        
+        
+        <span id="busuanzi_container_page_pv">
+            阅读 :<span id="busuanzi_value_page_pv">
+                <span class="count-comment">
+                    <span class="spinner">
+                      <div class="cube1"></div>
+                      <div class="cube2"></div>
+                    </span>
+                </span>
+            </span>
+        </span>
+        
+        
+    </div>
+    
+    <div class="toc-ref">
+    
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8F%82%E8%8E%B1%E5%A1%94%EF%BC%8C%E6%8A%98%E6%9E%9D%EF%BC%8C%E5%AE%88%E5%B2%B8%E4%BA%BA-%E6%9E%81%E8%87%B4%E5%AF%B9%E5%8D%95%E7%88%86%E5%8F%91"><span class="toc-text">珂莱塔，折枝，守岸人 - 极致对单爆发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%A1%E6%8F%90%E5%B8%8C%E5%A8%85%EF%BC%8C%E5%A4%8F%E7%A9%BA%EF%BC%8C%E9%A3%8E%E4%B8%BB"><span class="toc-text">卡提希娅，夏空，风主</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%97%E6%B4%9B%E6%B4%9B%EF%BC%8C%E6%95%A3%E5%8D%8E%EF%BC%8C%E5%9D%8E%E7%89%B9%E8%95%BE%E6%8B%89"><span class="toc-text">弗洛洛，散华，坎特蕾拉</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A3%B0%E9%AA%B8"><span class="toc-text">声骸</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%8D%A3%E8%80%80%E4%B9%8B%E4%B8%98-%E6%8B%89%E6%B5%B7%E6%B4%9B"><span class="toc-text">荣耀之丘 - 拉海洛</span></a>
+    
+<style>
+    .left-col .switch-btn,
+    .left-col .switch-area {
+        display: none;
+    }
+    .toc-level-3 i,
+    .toc-level-3 ol {
+        display: none !important;
+    }
+</style>
+</div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>料理：<br>糖醋里脊：+50%声骸吸收概率。糖醋汁（糖，食用油，醋），面粉，兽肉，特级香油<br>潮饼：+30%攻击力。鸟蛋，面粉，糖，食用油。</p>
+<p>森栖锅：+40%攻击力。火锅底料（食用油，辣椒，盐，禽肉），清汤（盐，花蕈，糖，禽肉），兽肉，云芝。<br>今洲冒菜：+28%暴击率<br>清葛粥：+22%暴击率。葛根，夜息香，鸳鸯花，米。</p>
+<p>酿肉豆腐：敌人素材+50%<br>龙抬头：+40%生命上限</p>
+<h2 id="珂莱塔，折枝，守岸人-极致对单爆发"><a href="#珂莱塔，折枝，守岸人-极致对单爆发" class="headerlink" title="珂莱塔，折枝，守岸人 - 极致对单爆发"></a>珂莱塔，折枝，守岸人 - 极致对单爆发</h2><p>启动轴：<br>守岸人普攻攒五格能量，重击<br>直接切柯莱塔打二段小技能<br>直接切回守岸人，普攻攒五格能量，重击，小技能，声骸，大招<br>切折枝，普攻三下攒满能量，E，普攻出现第三只鹤，声骸，E三下，大招<br>切柯莱塔，两段小技能，重击，大招，声骸</p>
+<p>循环轴：<br>守岸人变奏入场打洞悉（领域内），普攻攒五格能量，重击，小技能，声骸，大招<br>后续与启动轴相同，区别仅在于启动轴守岸人要打两段</p>
+<h2 id="卡提希娅，夏空，风主"><a href="#卡提希娅，夏空，风主" class="headerlink" title="卡提希娅，夏空，风主"></a>卡提希娅，夏空，风主</h2><p>启动轴：<br>风主入场先小技能，然后普攻四次（落地+冲一下）</p>
+<p>循环轴：<br>风主变奏入场，普攻三次（落地）</p>
+<p>续：<br>风主小技能，普攻三次（落地），声骸，大招，小技能<br>夏空声骸，普攻两次，小技能（取消普攻4的落地后摇），普攻三次（闪避取消后摇），重击，大招（直接切走，默认风蚀）<br>卡提声骸，普攻三次，小技能（升空），普攻（落地攻击，回收三把剑），大招<br>普攻五次，小技能<br>普攻两次，小技能<br>普攻三次，大招</p>
+<h2 id="弗洛洛，散华，坎特蕾拉"><a href="#弗洛洛，散华，坎特蕾拉" class="headerlink" title="弗洛洛，散华，坎特蕾拉"></a>弗洛洛，散华，坎特蕾拉</h2><h2 id="声骸"><a href="#声骸" class="headerlink" title="声骸"></a>声骸</h2><p>未毕业：<br>夏空 流云逝尽之空 未毕业<br>风主 愿戴荣光之旅 未毕业<br>尤诺 荣斗铸锋之冠 未毕业（梦魇祓除）<br>散华 轻云出月 未毕业<br>琳奈 逆光跃彩之约 未毕业<br>爱弥斯 长路启航之星 未毕业<br>西格莉卡 听唤语义之愿<br>莫宁 星构寻辉之环<br>赞妮 此间永驻之光</p>
+<p>小毕业：<br>弗洛洛 幽夜隐匿之帷 差一个1c大毕业<br>珂莱塔 凌冽决断之心 差一个3c大毕业<br>折枝 高天共奏之曲 差两个3c大毕业<br>菲比 此间永驻之光 小毕业<br>长离 熔山裂谷 差一个3c大毕业<br>卡提 愿戴荣光之旅 差一个1c大毕业</p>
+<p>大毕业：<br>今汐 浮星怯暗 大毕业<br>坎特蕾拉 幽夜隐匿之帷 大毕业<br>守岸人 隐世回光 要求低，小毕业<br>维里奈 隐世回光 要求低，未毕业</p>
+<h1 id="荣耀之丘-拉海洛"><a href="#荣耀之丘-拉海洛" class="headerlink" title="荣耀之丘 - 拉海洛"></a>荣耀之丘 - 拉海洛</h1><p>目标：叠三个双精灵的3c，两个天使一个车，然后就可以无限使用库洛洛强化<br>开局：精灵优先，其次选抽卡和能量<br>启动：优先叠双精灵，可以考虑叠单精灵过渡</p>
+
+      
+       <hr><span style="font-style: italic;color: gray;"> 转载请注明来源，欢迎对文章中的引用来源进行考证，欢迎指出任何有错误或不够清晰的表达。 </span>
+    </div>
+</article>
+
+
+
+
+
+
+
+    
+
+
+
+
+    </div>
+    <div class="copyright">
+        <p class="footer-entry">
+    ©2025 HanHaojun
+</p>
+<p class="footer-entry">Built with <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/yelog/hexo-theme-3-hexo" target="_blank">3-hexo</a> theme</p>
+
+    </div>
+    <div class="full-toc">
+        <button class="full" data-title="切换全屏"><span class="min "></span></button>
+<a class="" id="rocket" ></a>
+
+    </div>
+</div>
+
+</body>
+<script src="/js/jquery.pjax.js?v=1.1.0" ></script>
+
+<script src="/js/script.js?v=1.1.0" ></script>
+<script>
+    var img_resize = 'default';
+    function initArticle() {
+        /*渲染对应的表格样式*/
+        
+            $("#post .pjax table").addClass("green_title");
+        
+
+        /*渲染打赏样式*/
+        
+
+        /*高亮代码块行号*/
+        
+
+        /*访问数量*/
+        
+        $.getScript("//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js");
+        
+
+        /*代码高亮，行号对齐*/
+        $('.pre-numbering').css('line-height',$('.has-numbering').css('line-height'));
+
+        
+        
+    }
+
+    /*打赏页面隐藏与展示*/
+    
+
+</script>
+
+<!--加入行号的高亮代码块样式-->
+
+<!--自定义样式设置-->
+<style>
+    
+    
+    .nav {
+        width: 542px;
+    }
+    .nav.fullscreen {
+        margin-left: -542px;
+    }
+    .nav-left {
+        width: 120px;
+    }
+    
+    
+    @media screen and (max-width: 1468px) {
+        .nav {
+            width: 492px;
+        }
+        .nav.fullscreen {
+            margin-left: -492px;
+        }
+        .nav-left {
+            width: 100px;
+        }
+    }
+    
+    
+    @media screen and (max-width: 1024px) {
+        .nav {
+            width: 492px;
+            margin-left: -492px
+        }
+        .nav.fullscreen {
+            margin-left: 0;
+        }
+    }
+    
+    @media screen and (max-width: 426px) {
+        .nav {
+            width: 100%;
+        }
+        .nav-left {
+            width: 100%;
+        }
+    }
+    
+    
+    .nav-right .title-list nav a .post-title, .nav-right .title-list #local-search-result a .post-title {
+        color: #383636;
+    }
+    
+    
+    .nav-right .title-list nav a .post-date, .nav-right .title-list #local-search-result a .post-date {
+        color: #5e5e5f;
+    }
+    
+    
+    .nav-right nav a.hover, #local-search-result a.hover{
+        background-color: #e2e0e0;
+    }
+    
+    
+
+    /*列表样式*/
+    
+
+    /* 背景图样式 */
+    
+    
+
+
+    /*引用块样式*/
+    
+
+    /*文章列表背景图*/
+    
+
+    
+</style>
+
+
+
+
+
+
+
+</html>
